@@ -10,15 +10,21 @@ const registerController = async (req:Request, res:Response) => {
         // Extract request fields from body
         const { first_name, last_name, email, username, password } = req.body;
 
-        const errors: { [key: string]: string } = {};
+        const validation_errors = (req as any).validation_errors;
+        let errors: { [key: string]: string[] } = validation_errors || {};
 
         // Check to see if the email address is already taken
         let user = await UserModel.findOne({email});
 
         if(user !== null) {
+            
+            if (!errors.email) {
+                
+                errors.email = [];
 
-            request_logger('ERROR', 'Email already in use', req, true);
-            errors.email = 'Email already in use';
+            }
+
+            errors.email.push('Email already in use');
 
         }
 
@@ -27,14 +33,28 @@ const registerController = async (req:Request, res:Response) => {
 
         if(user !== null) {
 
-            request_logger('ERROR', 'Username is taken', req, true);
-            errors.username = 'Username is taken';
+            if (!errors.username) {
+                
+                errors.username = [];
+
+            }
+
+            errors.username.push('Username is taken');
 
         }
 
         // If there are any errors, return them
         if (Object.keys(errors).length > 0) {
-            return res.status(400).json({ errors });
+
+
+            const errorSummary = Object.entries(errors).map(([field, messages]) => `${field}: ${messages.join(', ')}`).join('; ');
+
+            request_logger('ERROR', `Validation failed for user registration: ${errorSummary}`, req, true);
+
+            return res.status(400).json({ 
+                errors 
+            });
+
         }
 
         // Hash the user's password

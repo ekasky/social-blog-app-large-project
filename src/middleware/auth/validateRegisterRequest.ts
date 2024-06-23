@@ -54,11 +54,18 @@ const validateRegisterRequest = [
 
         if(!errors.isEmpty()) {
 
-            request_logger('ERROR', `Invalid user data. Cannot register a new user: ${errors.array()}`, req, true);
+            const formattedErrors: { [key: string]: string[] } = {};
 
-            return res.status(400).json({
-                errors
+            errors.array().forEach((error) => {
+                if ('path' in error) {
+                    if (!formattedErrors[error.path]) {
+                        formattedErrors[error.path] = [];
+                    }
+                    formattedErrors[error.path].push(error.msg);
+                }
             });
+
+            (req as any).validation_errors = formattedErrors;
 
         }
 
