@@ -1,15 +1,10 @@
 import express, {Request, Response} from 'express';
 import validateRegisterRequest from '../middleware/auth/validateRegisterRequest';
+import registerController from '../controllers/auth/registerController';
 
 const authRouter = express.Router();
 
-authRouter.post('/register', validateRegisterRequest, (req:Request, res:Response) => {
-
-    console.log(req.body);
-
-    return res.status(200).send('okay');
-
-});
+authRouter.post('/register', validateRegisterRequest, registerController);
 authRouter.post('/verify', (req, res) => {});
 authRouter.post('/reset-password', (req, res) => {});
 authRouter.post('/login', (req, res) => {});
