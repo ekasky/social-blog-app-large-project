@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { request_logger } from '../../logs/logger';
 import UserModel from '../../database/models/UserModel';
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
+import sendVerifyEmail from '../../utils/sendVerifyEmail';
 
 const registerController = async (req:Request, res:Response) => {
 
@@ -64,6 +65,9 @@ const registerController = async (req:Request, res:Response) => {
         // Create a new user
         const new_user = new UserModel({first_name, last_name, email, username, password:hash});
         await new_user.save();
+
+        // Send account verify email
+        await sendVerifyEmail(email, new_user.id);
 
         // Return a success response
         request_logger('INFO', 'User registered successfully', req, true);
