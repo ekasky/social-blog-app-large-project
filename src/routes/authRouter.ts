@@ -1,14 +1,24 @@
 import express, {Request, Response} from 'express';
-import validateRegisterRequest from '../middleware/auth/validateRegisterRequest';
-import registerController from '../controllers/auth/registerController';
-import verifyController from '../controllers/auth/verifyController';
-import resendVerifyAccount from '../controllers/auth/resendVerifyAccount';
+import sanitizer from '../middleware/sanitizer';
+import { ErrorResponse } from '../interfaces/InputErrorInterface';
 
 const authRouter = express.Router();
 
-authRouter.post('/register', validateRegisterRequest, registerController);
-authRouter.get('/verify/:token', verifyController);
-authRouter.post('/resend-verify', resendVerifyAccount);
+authRouter.post('/register', sanitizer, (req, res) => {
+
+    const errors = (req as any).errors as ErrorResponse | undefined;
+
+    if(errors && Object.keys(errors.errors).length > 0) {
+
+        return res.status(400).json(errors);
+
+    }
+
+    return res.status(200).send('okay');
+
+});
+authRouter.get('/verify/:token', (req, res) => {});
+authRouter.post('/resend-verify', (req, res) => {});
 authRouter.post('/reset-password', (req, res) => {});
 authRouter.post('/login', (req, res) => {});
 authRouter.post('/logout', (req, res) => {});
