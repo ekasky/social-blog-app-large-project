@@ -3,6 +3,7 @@ import { ErrorResponse } from '../../interfaces/InputErrorInterface';
 import UserModel from '../../database/models/UserModel';
 import { request_logger } from '../../logs/logger';
 import bcrypt from 'bcrypt';
+import sendVerifyEmail from '../../utils/sendVerificationEmail';
 
 const registerController = async (req:Request, res:Response) => {
 
@@ -60,6 +61,8 @@ const registerController = async (req:Request, res:Response) => {
         const new_user = new UserModel({first_name, last_name, email, username, password:hash});
         await new_user.save();
 
+        // Send verify email
+        await sendVerifyEmail(email, new_user.id);
 
         return res.status(201).json({
             message: 'okay'
