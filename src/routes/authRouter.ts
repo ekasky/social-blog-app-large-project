@@ -1,10 +1,11 @@
 import express, {Request, Response} from 'express';
 import sanitizer from '../middleware/sanitizer';
 import { ErrorResponse } from '../interfaces/InputErrorInterface';
+import validateRegisterRequest from '../middleware/validateRegisterRequest';
 
 const authRouter = express.Router();
 
-authRouter.post('/register', sanitizer, (req, res) => {
+authRouter.post('/register', sanitizer, validateRegisterRequest, (req:Request, res:Response) => {
 
     const errors = (req as any).errors as ErrorResponse | undefined;
 
