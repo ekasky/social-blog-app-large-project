@@ -30,7 +30,7 @@ const sendVerifyEmail = async (email:string, userId: mongoose.Types.ObjectId) =>
             html: 
             `
                 <p>Hello,</p>
-                <p>Please click the link to verify your account: <a href="${process.env.VERIFY_EMAIL_BASE_URL}/api/auth/verifiy/${token}">Verify</a></p>
+                <p>Please click the link to verify your account: <a href="${process.env.VERIFY_EMAIL_BASE_URL}/api/auth/verify/${token}">Verify</a></p>
                 <p>This link will expire in 1 hour.</p>
             `
         };
